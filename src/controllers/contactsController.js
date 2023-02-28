@@ -1,73 +1,55 @@
-import { v4 as uuidv4 } from "uuid";
-
 import {
-  listContacts,
-  getContactById,
+  updateStatusContact,
+  getContacts,
+  getContactsById,
   addContact,
-  removeContact,
-  updateContact,
-} from "../models/contacts.js";
+  changeContact,
+  deleteContact,
+} from "../services/index.js";
 
-export const getContacts = async (req, res, next) => {
-  try {
-    const contacts = await listContacts();
+export const getContactsController = async (req, res, next) => {
+  const contacts = await getContacts();
 
-    res.json({ contacts });
-  } catch (error) {
-    console.log(error);
-  }
+  res.json({ contacts });
 };
 
-export const contactById = async (req, res, next) => {
-  try {
-    const contact = await getContactById(req.params.contactId);
+export const contactByIdController = async (req, res) => {
+  const { contactId } = req.params;
 
-    if (!contact) {
-      throw new Error();
-    }
+  const contact = await getContactsById(contactId);
 
-    res.json({ contact });
-  } catch {
-    res.status(400).json({ message: "Not found" });
-  }
+  res.json({ contact, status: "success" });
 };
 
-export const postContact = async (req, res, next) => {
+export const postContactController = async (req, res) => {
   const { name, email, phone } = req.body;
 
-  try {
-    const contacts = await addContact({ id: uuidv4(), name, email, phone });
-    res.status(201).json({ contacts });
-  } catch (error) {
-    res.status(400).json({ message: "missing required name field" });
-  }
+  await addContact({ name, email, phone });
+
+  res.json({ status: "success" });
 };
 
-export const deleteContact = async (req, res, next) => {
+export const deleteContactController = async (req, res) => {
   const { contactId } = req.params;
-  try {
-    const data = await removeContact(contactId);
 
-    if (!data) {
-      throw new Error();
-    }
+  await deleteContact(contactId);
 
-    res.json({ message: "contact deleted" });
-  } catch (error) {
-    res.status(404).json({ message: "Not found" });
-  }
+  res.json({ status: "contact deleted" });
 };
 
-export const putContact = async (req, res, next) => {
-  try {
-    const contacts = await updateContact(req.params.contactId, req.body);
+export const putContactController = async (req, res) => {
+  const { name, email, phone } = req.body;
+  const { contactId } = req.params;
 
-    if (!contacts) {
-      throw new Error();
-    }
+  await changeContact(contactId, { name, email, phone });
 
-    res.json({ contacts });
-  } catch (error) {
-    res.status(400).json({ message: "Not found" });
-  }
+  res.json({ status: "success" });
+};
+
+export const patchContactController = async (req, res) => {
+  const { contactId } = req.params;
+
+  const contact = await updateStatusContact(contactId, req.body);
+
+  res.json({ contact });
 };
