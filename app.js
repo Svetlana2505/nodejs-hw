@@ -3,7 +3,7 @@ import logger from "morgan";
 import cors from "cors";
 import * as dotenv from "dotenv";
 
-import { router } from "./src/routes/api/contacts.js";
+import { router } from "./src/routes/api/index.js";
 import { errorHandler } from "./src/helpers/apiHelpers.js";
 dotenv.config();
 const app = express();

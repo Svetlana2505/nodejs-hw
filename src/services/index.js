@@ -1,4 +1,4 @@
-import { Contact } from "../db/contactModel.js";
+import { Contact } from "./schemas/contactShema.js";
 import { ParametersError } from "../helpers/errors.js";
 
 export const getContacts = async () => {
@@ -16,7 +16,6 @@ export const getContactsById = async (contactId) => {
 export const addContact = async ({ name, email, phone }) => {
   const contact = new Contact({ name, email, phone });
   await contact.save();
-  
 };
 
 export const deleteContact = async (contactId) => {
