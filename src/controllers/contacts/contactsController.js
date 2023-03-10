@@ -5,12 +5,14 @@ import {
   addContact,
   changeContact,
   deleteContact,
-} from "../services/index.js";
+} from "../../services/contactsService.js";
 
 export const getContactsController = async (req, res, next) => {
-  const contacts = await getContacts();
+  const { page, limit, favorite } = req.query;
 
-  res.json({ contacts });
+  const contacts = await getContacts(page, limit, favorite);
+
+  res.json({ contacts, page, limit });
 };
 
 export const contactByIdController = async (req, res) => {

@@ -1,21 +1,20 @@
-import { Contact } from "./schemas/contactShema.js";
+import { Contact } from "../services/schemas/contactShema.js";
 import { ParametersError } from "../helpers/errors.js";
 
-export const getContacts = async () => {
-  const contacts = await Contact.find();
+export const getContacts = async (page, limit, id, favorite) => {
+  if (favorite) {
+    return Contact.find({ owner: id, favorite }).skip(page).limit(limit);
+  }
 
-  return contacts;
+  return Contact.find({ owner: id }).skip(page).limit(limit);
 };
 
 export const getContactsById = async (contactId) => {
-  const contact = await Contact.findById({ _id: contactId });
-
-  return contact;
+  return Contact.findById({ _id: contactId });
 };
 
-export const addContact = async ({ name, email, phone }) => {
-  const contact = new Contact({ name, email, phone });
-  await contact.save();
+export const addContact = async ({ name, email, phone }, id) => {
+  return Contact.create({ name, email, phone, owner: id });
 };
 
 export const deleteContact = async (contactId) => {
