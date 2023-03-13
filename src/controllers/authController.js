@@ -49,9 +49,6 @@ export const loginController = async (req, res, next) => {
     expiresIn: "2d",
   });
 
-  // const decode = await jwt.decode(token);
-  // console.log(decode);
-
   await User.findByIdAndUpdate(user._id, { token });
 
   return res.json({

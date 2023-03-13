@@ -8,10 +8,6 @@ import {
 } from "../../services/contactsService.js";
 
 export const getContactsController = async (req, res, next) => {
-  console.log(req.user);
-  // const token = req.headers["authorization"].split(" ");
-  // console.log(token);
-
   const { page, limit, favorite } = req.query;
   const { _id } = req.user;
   const contacts = await getContacts({ page, limit, favorite }, _id);
