@@ -1,4 +1,4 @@
-import { ObjectId } from "mongodb";
+// import { ObjectId } from "mongodb";
 import { Schema, model, SchemaTypes } from "mongoose";
 
 const contactSchema = new Schema(
@@ -18,9 +18,8 @@ const contactSchema = new Schema(
       default: false,
     },
     owner: {
-      type: ObjectId,
-      // type: SchemaTypes.ObjectId,
-      // ref: "user",
+      type: SchemaTypes.ObjectId,
+      ref: "user",
     },
   },
   { versionKey: false, timestamps: true }

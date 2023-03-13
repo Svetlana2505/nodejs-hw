@@ -8,9 +8,13 @@ import {
 } from "../../services/contactsService.js";
 
 export const getContactsController = async (req, res, next) => {
-  const { page, limit, favorite } = req.query;
+  console.log(req.user);
+  // const token = req.headers["authorization"].split(" ");
+  // console.log(token);
 
-  const contacts = await getContacts(page, limit, favorite);
+  const { page, limit, favorite } = req.query;
+  const { _id } = req.user;
+  const contacts = await getContacts({ page, limit, favorite }, _id);
 
   res.json({ contacts, page, limit });
 };
@@ -25,8 +29,9 @@ export const contactByIdController = async (req, res) => {
 
 export const postContactController = async (req, res) => {
   const { name, email, phone } = req.body;
+  const _id = req.user;
 
-  await addContact({ name, email, phone });
+  await addContact({ name, email, phone }, _id);
 
   res.json({ status: "success" });
 };

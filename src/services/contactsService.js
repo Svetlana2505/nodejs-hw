@@ -1,13 +1,35 @@
 import { Contact } from "../services/schemas/contactShema.js";
 import { ParametersError } from "../helpers/errors.js";
+// import { User } from "./schemas/userShema.js";
 
-export const getContacts = async (page, limit, id, favorite) => {
+export const getContacts = async ({ page, limit, favorite }, id) => {
   if (favorite) {
     return Contact.find({ owner: id, favorite }).skip(page).limit(limit);
   }
 
   return Contact.find({ owner: id }).skip(page).limit(limit);
 };
+
+//   const user = await User.aggregate([
+//     [
+//       {
+//         $lookup: {
+//           from: "contacts",
+//           localField: "_id",
+//           foreignField: "owner",
+//           as: "result",
+//         },
+//       },
+//       {
+//         $project: {
+//           token: 0,
+//           password: 0,
+//         },
+//       },
+//     ],
+//   ]);
+//   return user;
+// };
 
 export const getContactsById = async (contactId) => {
   return Contact.findById({ _id: contactId });

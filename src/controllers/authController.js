@@ -31,7 +31,7 @@ export const registrationController = async (req, res, next) => {
 export const loginController = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-
+  console.log(user);
   if (!user || !user.validPassword(password)) {
     return res.status(400).json({
       status: "error",
@@ -48,6 +48,9 @@ export const loginController = async (req, res, next) => {
   const token = await jwt.sign(payload, process.env.SECRET, {
     expiresIn: "2d",
   });
+
+  // const decode = await jwt.decode(token);
+  // console.log(decode);
 
   await User.findByIdAndUpdate(user._id, { token });
 

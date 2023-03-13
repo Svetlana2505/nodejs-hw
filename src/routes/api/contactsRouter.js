@@ -2,6 +2,7 @@ import { Router } from "express";
 
 import { contactValidation } from "../../validation/validationMiddleware.js";
 import { asyncWrapper } from "../../helpers/apiHelpers.js";
+import { auth } from "../../middlewares/authMiddlewares.js";
 
 import {
   getContactsController,
@@ -14,11 +15,11 @@ import {
 
 export const router = new Router();
 
-router.get("/", asyncWrapper(getContactsController));
+router.get("/", auth, asyncWrapper(getContactsController));
 
 router.get("/:contactId", asyncWrapper(contactByIdController));
 
-router.post("/", contactValidation, asyncWrapper(postContactController));
+router.post("/", auth, contactValidation, asyncWrapper(postContactController));
 
 router.delete("/:contactId", asyncWrapper(deleteContactController));
 
