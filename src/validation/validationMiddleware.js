@@ -3,7 +3,7 @@ import { ValidationError } from "../helpers/errors.js";
 
 export const contactValidation = (req, res, next) => {
   const schema = Joi.object({
-    name: Joi.string().alphanum().min(2).max(15).required(),
+    name: Joi.string().min(2).max(15).required(),
     email: Joi.string()
       .email({
         minDomainSegments: 2,
@@ -16,7 +16,7 @@ export const contactValidation = (req, res, next) => {
   const validationResult = schema.validate(req.body);
 
   if (validationResult.error) {
-    next(new ValidationError(validationResult.error.details[0].message));
+    next(new ValidationError(JSON.stringify(validationResult.error.details)));
   }
 
   next();

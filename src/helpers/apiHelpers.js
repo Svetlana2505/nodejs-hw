@@ -1,19 +1,13 @@
-import { ValidationError, ParametersError } from "./errors.js";
+import { Nodejs04Error } from "./errors.js";
 
 export const asyncWrapper = (controller) => {
   return (req, res, next) => {
-    controller(req, res).catch(() => {
-      if (ParametersError) {
-        next(new ParametersError("missing field favorite"));
-        return;
-      }
-      next(new ParametersError(`failure, co contact with id  fould`));
-    });
+    controller(req, res).catch(next);
   };
 };
 
 export const errorHandler = (err, req, res, next) => {
-  if (err instanceof ValidationError || err instanceof ParametersError) {
+  if (err instanceof Nodejs04Error) {
     return res.status(err.status).json({ message: err.message });
   }
 
