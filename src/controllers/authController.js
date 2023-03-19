@@ -1,4 +1,5 @@
 import jwt from "jsonwebtoken";
+import gravatar from "gravatar";
 
 import { User } from "../services/schemas/userShema.js";
 
@@ -15,8 +16,10 @@ export const registrationController = async (req, res, next) => {
       data: "Conflict",
     });
   }
+  const avatarURL = gravatar.url(email);
 
-  const newUser = new User({ email });
+  const newUser = new User({ email, avatarURL });
+
   newUser.setPassword(password);
   await newUser.save();
   res.status(201).json({
