@@ -7,6 +7,12 @@ const storage = multer.diskStorage({
   destination: tempDir,
   filename: (req, file, cb) => {
     cb(null, file.originalname);
+
+    // const [, extension] = file.originalname.split(".");
+
+    // const filename = `${uuid()}.${extention}`;
+
+    // cb(null, filename);
   },
 });
 
