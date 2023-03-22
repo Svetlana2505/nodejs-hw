@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
+import { v4 as uuidv4 } from "uuid";
 
-import { User } from "../services/schemas/userShema.js";
+import { User } from "../../services/schemas/userShema.js";
+import sendEmail from "../../helpers/sendEmail.js";
+
+const { BASE_URL } = process.env;
 
 export const registrationController = async (req, res, next) => {
   const { email, password } = req.body;
@@ -17,11 +21,20 @@ export const registrationController = async (req, res, next) => {
     });
   }
   const avatarURL = gravatar.url(email);
-
-  const newUser = new User({ email, avatarURL });
+  const verificationToken = uuidv4();
+  const newUser = new User({ email, avatarURL, verificationToken });
 
   newUser.setPassword(password);
   await newUser.save();
+
+  const mail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target='_blank' href='${BASE_URL}/api/auth/verify/${verificationToken}' >Click to verify you email</a>`,
+  };
+
+  await sendEmail(mail);
+
   res.status(201).json({
     status: "success",
     code: 201,
