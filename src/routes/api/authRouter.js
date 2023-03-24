@@ -18,10 +18,10 @@ export const authRouter = new Router();
 
 authRouter.get(
   "/verify/:verificationToken",
-  auth,
+
   asyncWrapper(verifyController)
 );
-authRouter.post("/verify", auth, asyncWrapper(resendEmail));
+authRouter.post("/verify", asyncWrapper(resendEmail));
 authRouter.post("/signup", asyncWrapper(registrationController));
 authRouter.post("/login", asyncWrapper(loginController));
 authRouter.get("/current", auth, asyncWrapper(currentController));

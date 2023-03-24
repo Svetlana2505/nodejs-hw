@@ -30,7 +30,7 @@ export const registrationController = async (req, res, next) => {
   const mail = {
     to: email,
     subject: "Verify email",
-    html: `<a target='_blank' href='${BASE_URL}/api/auth/verify/${verificationToken}' >Click to verify you email</a>`,
+    html: `<a target='_blank' href='${BASE_URL}/api/users/verify/${verificationToken}' >Click to verify you email</a>`,
   };
 
   await sendEmail(mail);
@@ -47,7 +47,7 @@ export const registrationController = async (req, res, next) => {
 export const loginController = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  console.log(user);
+
   if (!user || !user.validPassword(password)) {
     return res.status(400).json({
       status: "error",
@@ -55,6 +55,11 @@ export const loginController = async (req, res, next) => {
       message: "Incorrect login or password",
       data: "Bad request",
     });
+  }
+
+  if (user.verificationToken) {
+    res.status(401).json({ message: "Verify your mail" });
+    return;
   }
 
   const payload = {
