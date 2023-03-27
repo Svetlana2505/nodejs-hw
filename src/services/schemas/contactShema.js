@@ -1,4 +1,3 @@
-// import { ObjectId } from "mongodb";
 import { Schema, model, SchemaTypes } from "mongoose";
 
 const contactSchema = new Schema(

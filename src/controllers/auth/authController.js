@@ -1,7 +1,11 @@
 import jwt from "jsonwebtoken";
 import gravatar from "gravatar";
+import { v4 as uuidv4 } from "uuid";
 
-import { User } from "../services/schemas/userShema.js";
+import { User } from "../../services/schemas/userShema.js";
+import sendEmail from "../../helpers/sendEmail.js";
+
+const { BASE_URL } = process.env;
 
 export const registrationController = async (req, res, next) => {
   const { email, password } = req.body;
@@ -17,11 +21,20 @@ export const registrationController = async (req, res, next) => {
     });
   }
   const avatarURL = gravatar.url(email);
-
-  const newUser = new User({ email, avatarURL });
+  const verificationToken = uuidv4();
+  const newUser = new User({ email, avatarURL, verificationToken });
 
   newUser.setPassword(password);
   await newUser.save();
+
+  const mail = {
+    to: email,
+    subject: "Verify email",
+    html: `<a target='_blank' href='${BASE_URL}/api/users/verify/${verificationToken}' >Click to verify you email</a>`,
+  };
+
+  await sendEmail(mail);
+
   res.status(201).json({
     status: "success",
     code: 201,
@@ -34,7 +47,7 @@ export const registrationController = async (req, res, next) => {
 export const loginController = async (req, res, next) => {
   const { email, password } = req.body;
   const user = await User.findOne({ email });
-  console.log(user);
+
   if (!user || !user.validPassword(password)) {
     return res.status(400).json({
       status: "error",
@@ -42,6 +55,11 @@ export const loginController = async (req, res, next) => {
       message: "Incorrect login or password",
       data: "Bad request",
     });
+  }
+
+  if (user.verificationToken) {
+    res.status(401).json({ message: "Verify your mail" });
+    return;
   }
 
   const payload = {
